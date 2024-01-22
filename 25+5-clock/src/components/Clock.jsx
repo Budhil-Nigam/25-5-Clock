@@ -137,7 +137,7 @@ const Session=(props)=>{
   );
 }
 
-const Clock=()=>{
+function Clock(){
   const [isactive,setActive]=useState(false);
   const [breaktime,setBreak]=useState(5);
   const [sessiontime,setSession]=useState(25);
