@@ -1,16 +1,18 @@
-
 import {useState,useEffect,useMemo} from "react";
 import {FaArrowAltCircleUp,FaArrowAltCircleDown,FaPlay,FaPause} from "react-icons/fa"
 import { IoReload } from "react-icons/io5";
+import clickSound from "../assets/mixkit-mouse-click-close-1113.wav";
 const Timer=(props)=>{
   const [mode,setMode]=useState(0);
   const [session,setSession]=[props.sessiontime,props.sessionsetter];
   const [breaks,setBreak]=[props.breaktime,props.breaksetter];
-  const timeperiods=[session,breaks];
+  const timeperiods=[session*60,breaks*60];
   const [isactive,setActive]=[props.active,props.setter];
   const [time,setTime]=useState(timeperiods[0]);
   const timesUpdate=useMemo(()=>{setTime(timeperiods[mode]);},[session,breaks]);
   const handleStartStop=()=>{
+    const sound=new Audio(clickSound);
+    sound.play();
     setActive(!isactive);
   }
   useEffect(()=>{
@@ -45,6 +47,7 @@ const Timer=(props)=>{
     if(!document.getElementById("beep").paused){
       document.getElementById("beep").pause();
       document.getElementById("beep").currentTime=0;
+      return;
     }
     setActive(false);
     setBreak(5);
@@ -58,16 +61,16 @@ const Timer=(props)=>{
         <div className="bg-gray-600 w-24 h-1/2 rounded-lg border-solid border-b-2 border-black"></div>
         <div className="bg-gray-600 w-12 h-1/2"></div>
   </div>
-  <div id="stopwatch" className="bg-gray-200 h-3/5 rounded-full flex flex-col justify-center mx-auto my-auto ring-gray-700 ring-8 border-solid border-8 border-gray-700 overflow-hidden z-0 shadow-inner">
+  <div id="stopwatch" style={{aspectRatio:"1/1"}} className="bg-gray-200 h-3/5 rounded-full flex flex-col justify-center mx-auto my-auto ring-gray-700 ring-8 border-solid border-8 border-gray-700 overflow-hidden z-0 shadow-inner">
       <p id="timer-label" className="text-center font-medium text-2xl text-gray-600">{mode==0?"Session":"Break"}</p>
-      <div id="time-left" className={"flex border bg-white-500 justify-center text-center text-5xl font-medium "+(time<60?"text-red-500":"")}>
+      <div id="time-left" className={"flex justify-center text-center mt-4 text-5xl font-medium "+(time<60?"text-red-500":"text-black")}>
       {("0" + Math.floor(time/60)).slice(-2)}:
       {("0" + time%60).slice(-2)}
       <audio id="beep" preload="auto" src="https://cdn.freecodecamp.org/testable-projects-fcc/audio/BeepSound.wav"></audio>
       </div>
-      <section className="flex justify-center mt-4 space-x-4 text-xl">
-      <button id="start_stop" onClick={()=>handleStartStop()} className="text-gray-800" >{isactive?<FaPause/>:<FaPlay/>}</button>
-      <button id="reset" className="text-gray-800" onClick={()=>Reset()}><IoReload/></button>
+      <section className="flex justify-center mt-8 space-x-8 text-2xl">
+      <p id="start_stop" className="text-gray-800 bg-gray-200 cursor-pointer" onClick={()=>handleStartStop()} >{isactive?<FaPause/>:<FaPlay/>}</p>
+      <p id="reset" className="text-gray-800 bg-gray-200 cursor-pointer" onClick={()=>Reset()}><IoReload/></p>
       </section>
 </div>
 </div>
@@ -95,7 +98,7 @@ const Break=(props)=>{
     });
   }
   return (
-  <div className="bg-blue-300 w-1/2 flex flex-col justify-center text-center text-xl">
+  <div className="bg-blue-500 w-1/2 flex flex-col justify-center text-center text-xl">
     <p id="break-label">Break Length</p>
     <section className="flex flex-row justify-center">
     <span id="break-increment" onClick={()=>props.active?null:increase()} className="cursor-pointer"><FaArrowAltCircleUp className="relative top-0.25 h-full mr-2 text-white"/></span>
